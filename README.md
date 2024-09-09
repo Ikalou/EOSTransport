@@ -10,7 +10,7 @@ For a quick tutorial on how  to get set up, feel free to follow this
 - PC
 - MacOS
 - Android
-- *iOS is currently in development...*
+- iOS
 
 ## Dependencies
 - Mirror ([Documentation](https://mirror-networking.gitbook.io/docs/))
@@ -48,7 +48,7 @@ You'll need these keys to access the Services!  If you have them already, then i
     - Right click in the Project View and create an EOS API Key Asset (Create -> EOS -> API Key)
     - Fill out all the SDK keys on the EOS API Key Asset, you can find them in the Epic Online Services Dev Portal (SDK -> SDK Credentials -> Get Credentials)
 
-## 3. Running a demo
+## 3. Running the demo
 Provided to you in the **Sample_Transport** directory is a scene that shows you what is needed on a gameobject in order for this transport to work.
 
 *Please note that you'll need two devices to test this transport!*
@@ -59,8 +59,8 @@ Provided to you in the **Sample_Transport** directory is a scene that shows you 
     - Scroll down to the **EOSSDK Component** and be sure to set the **Api Keys** slot to the one you set in **Step 2.3**
     - Click play
     - When the game starts, click "Host"
-        - You will see in the log the following message:  
         ```
+        You will see in the log the following message:  
         "EOS User Product ID: 00020000000000000000000000000"
 
         That long string is your PID!  
@@ -73,12 +73,28 @@ Provided to you in the **Sample_Transport** directory is a scene that shows you 
     - If successful, you should be connected to the Host Player
     - Press the "A" to move left, "D" to move right on both computers to see the player moving on the screen
 
-## 4. Building for Android
+## Building for Android
 1. Install the **Android Module** through **Unity Hub**
 2. In File -> Build Settings, switch platform to Android
 3. In Unity -> Edit -> Project Settings... -> Player -> Android -> Other Settings -> Identification set Minimum API Level to Android 6.0 'Marshmallow' (API Level 23) as required by the EOS Android SDK
 4. (Optional) Install Android Logcat through Package Manager to see logs when running on Android device over USB (Window -> Package Manager -> Packages: Unity Registry -> Android Logcat -> Install) then open with Alt+6 or Window -> Analysis -> Android Logcat
 
+## Building for iOS
+Source: https://www.youtube.com/watch?v=Z-gija1aAhw
+1. Unity
+    1. Install the **iOS Module** through **Unity Hub**
+    2. In File -> Build Settings, switch platform to iOS
+    3. Set up your **Player Settings - iOS** to whatever you need it to be (it is simpler than Android)
+    4. Build the project
+2. XCODE application
+    1. Open XCODE app on your Mac
+    2. Open the folder where your Unity IOS build is
+    3. When the project is opened in XCODE, click the top folder in the hierarchy (mine says:  "Unity-iPhone")
+    4. CLick **Signing & Capabilities**
+        - At the top-center of XCODE, be sure your connected iPhone is selected, not your Mac!
+        - Check **Automatically manage signing**
+        - Set your Team
+        - Click the **Play** button and Xcode will compile the project, sign it, and deploy it onto your device.
 
 ## Old Notes from FakeByte
 Change the [Auth Interface Credential Type](https://dev.epicgames.com/docs/services/en-US/API/Members/Enums/Auth/EOS_ELoginCredentialType/index.html) and [Connect Interface Credential Types](https://dev.epicgames.com/docs/services/en-US/API/Members/Enums/NoInterface/EOS_EExternalCredentialType/index.html) on the EOSSDKComponent to suit the needs of your project
