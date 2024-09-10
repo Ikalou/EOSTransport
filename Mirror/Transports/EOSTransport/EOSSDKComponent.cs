@@ -268,7 +268,10 @@ namespace EpicTransport {
             // The SDK outputs lots of information that is useful for debugging.
             // Make sure to set up the logging interface as early as possible: after initializing.
             LoggingInterface.SetLogLevel(LogCategory.AllCategories, epicLoggerLevel);
-            LoggingInterface.SetCallback((ref LogMessage message) => Logger.EpicDebugLog(message));
+            LoggingInterface.SetCallback((ref LogMessage message) => {
+                if (message.Message == "DeviceId access credentials already exist for the current user profile on the local device.") { return; }
+                Logger.EpicDebugLog(message);
+            });
 
             var options = new Options() {
                 ProductId = apiKeys.epicProductId,
