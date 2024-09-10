@@ -91,29 +91,51 @@ namespace EpicTransport {
             OnConnectionFailed(result.RemoteUserId);
 
             switch (result.Reason) {
-                case ConnectionClosedReason.ClosedByLocalUser:
-                    throw new Exception("Connection cLosed: The Connection was gracecfully closed by the local user.");
-                case ConnectionClosedReason.ClosedByPeer:
-                    throw new Exception("Connection closed: The connection was gracefully closed by remote user.");
-                case ConnectionClosedReason.ConnectionClosed:
-                    throw new Exception("Connection closed: The connection was unexpectedly closed.");
-                case ConnectionClosedReason.ConnectionFailed:
-                    throw new Exception("Connection failed: Failled to establish connection.");
-                case ConnectionClosedReason.InvalidData:
-                    throw new Exception("Connection failed: The remote user sent us invalid data..");
-                case ConnectionClosedReason.InvalidMessage:
-                    throw new Exception("Connection failed: The remote user sent us an invalid message.");
-                case ConnectionClosedReason.NegotiationFailed:
-                    throw new Exception("Connection failed: Negotiation failed.");
-                case ConnectionClosedReason.TimedOut:
-                    throw new Exception("Connection failed: Timeout.");
-                case ConnectionClosedReason.TooManyConnections:
-                    throw new Exception("Connection failed: Too many connections.");
-                case ConnectionClosedReason.UnexpectedError:
-                    throw new Exception("Unexpected Error, connection will be closed");
-                case ConnectionClosedReason.Unknown:
-                default:
-                    throw new Exception("Unknown Error, connection has been closed.");
+            case ConnectionClosedReason.ClosedByLocalUser:
+                // throw new Exception("Connection cLosed: The Connection was gracecfully closed by the local user.");
+                Debug.LogWarning("Connection cLosed: The Connection was gracecfully closed by the local user.");
+                break;
+            case ConnectionClosedReason.ClosedByPeer:
+                //throw new Exception("Connection closed: The connection was gracefully closed by remote user.");
+                Debug.LogWarning("Connection closed: The connection was gracefully closed by remote user.");
+                break;
+            case ConnectionClosedReason.ConnectionClosed:
+                //throw new Exception("Connection closed: The connection was unexpectedly closed.");
+                Debug.LogWarning("Connection closed: The connection was unexpectedly closed.");
+                break;
+            case ConnectionClosedReason.ConnectionFailed:
+                //throw new Exception("Connection failed: Failled to establish connection.");
+                Debug.LogWarning("Connection failed: Failled to establish connection.");
+                break;
+            case ConnectionClosedReason.InvalidData:
+                //throw new Exception("Connection failed: The remote user sent us invalid data..");
+                Debug.LogWarning("Connection failed: The remote user sent us invalid data..");
+                break;
+            case ConnectionClosedReason.InvalidMessage:
+                //throw new Exception("Connection failed: The remote user sent us an invalid message.");
+                Debug.LogWarning("Connection failed: The remote user sent us an invalid message.");
+                break;
+            case ConnectionClosedReason.NegotiationFailed:
+                //throw new Exception("Connection failed: Negotiation failed.");
+                Debug.LogWarning("Connection failed: Negotiation failed.");
+                break;
+            case ConnectionClosedReason.TimedOut:
+                //throw new Exception("Connection failed: Timeout.");
+                Debug.LogWarning("Connection failed: Timeout.");
+                break;
+            case ConnectionClosedReason.TooManyConnections:
+                //throw new Exception("Connection failed: Too many connections.");
+                Debug.LogWarning("Connection failed: Too many connections.");
+                break;
+            case ConnectionClosedReason.UnexpectedError:
+                //throw new Exception("Unexpected Error, connection will be closed");
+                Debug.LogWarning("Unexpected Error, connection will be closed");
+                break;
+            case ConnectionClosedReason.Unknown:
+            default:
+                //throw new Exception("Unknown Error, connection has been closed.");
+                Debug.LogWarning("Unknown Error, connection has been closed.");
+                break;
             }
         }
 
