@@ -122,6 +122,8 @@ namespace EpicTransport {
 
         public void Disconnect(int connectionId) {
             if (epicToMirrorIds.TryGetValue(connectionId, out ProductUserId userId)) {
+                OnDisconnected.Invoke(connectionId);
+
                 SocketId socketId;
                 epicToSocketIds.TryGetValue(userId, out socketId);
                 SendInternal(userId, socketId, InternalMessages.DISCONNECT);
@@ -178,7 +180,7 @@ namespace EpicTransport {
             int connectionId = epicToMirrorIds.TryGetValue(remoteId, out int connId) ? connId : nextConnectionID++;
             OnDisconnected.Invoke(connectionId);
 
-            Debug.LogError("Connection Failed, removing user");
+            Debug.LogWarning("Connection Failed, removing user");
             epicToMirrorIds.Remove(remoteId);
             epicToSocketIds.Remove(remoteId);
         }

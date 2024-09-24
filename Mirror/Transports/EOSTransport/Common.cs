@@ -168,7 +168,7 @@ namespace EpicTransport {
 
             Result result = p2pInterface.SendPacket(ref options);
 
-            if(result != Result.Success) {
+            if (result != Result.Success) {
                 Debug.LogError("Send failed " + result);
             }
         }
@@ -268,13 +268,13 @@ namespace EpicTransport {
                         }
 
                         int packetListIndex = incomingPackets[incomingPacketKey].Count;
-                        for(int i = 0; i < incomingPackets[incomingPacketKey].Count; i++) {
-                            if(incomingPackets[incomingPacketKey][i][0].id == packet.id) {
+                        for (int i = 0; i < incomingPackets[incomingPacketKey].Count; i++) {
+                            if (incomingPackets[incomingPacketKey][i][0].id == packet.id) {
                                 packetListIndex = i;
                                 break;
                             }
                         }
-                        
+
                         if (packetListIndex == incomingPackets[incomingPacketKey].Count) {
                             incomingPackets[incomingPacketKey].Add(new List<Packet>());
                         }
@@ -298,8 +298,8 @@ namespace EpicTransport {
 
                 // Find fully received packets
                 List<List<Packet>> emptyPacketLists = new List<List<Packet>>();
-                foreach(KeyValuePair<PacketKey, List<List<Packet>>> keyValuePair in incomingPackets) {
-                    for(int packetList = 0; packetList < keyValuePair.Value.Count; packetList++) {
+                foreach (KeyValuePair<PacketKey, List<List<Packet>>> keyValuePair in incomingPackets) {
+                    for (int packetList = 0; packetList < keyValuePair.Value.Count; packetList++) {
                         bool packetReady = true;
                         int packetLength = 0;
                         for (int packet = 0; packet < keyValuePair.Value[packetList].Count; packet++) {
@@ -322,7 +322,7 @@ namespace EpicTransport {
 
                             OnReceiveData(data, keyValuePair.Key.productUserId, keyValuePair.Key.channel);
 
-                            if(transport.ServerActive() || transport.ClientActive())
+                            if (transport.ServerActive() || transport.ClientActive())
                                 emptyPacketLists.Add(keyValuePair.Value[packetList]);
                         }
                     }
