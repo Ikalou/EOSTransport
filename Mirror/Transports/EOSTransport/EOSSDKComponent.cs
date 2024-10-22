@@ -131,6 +131,11 @@ namespace EpicTransport {
             }
         }
 
+        public static void ResetConnection() {
+            Instance.isConnecting = false;
+            Instance.initialized = false;
+        }
+
         protected static EOSSDKComponent instance;
         protected static EOSSDKComponent Instance {
             get {
