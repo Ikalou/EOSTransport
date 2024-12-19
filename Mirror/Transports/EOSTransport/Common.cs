@@ -37,8 +37,7 @@ namespace EpicTransport {
         P2PInterface p2pInterface;
 
         // Mapping from PacketKey to a List of Packet Lists
-        protected Dictionary<PacketKey, List<List<Packet>>> incomingPackets = new Dictionary<PacketKey, List<List<Packet>>>();
-
+        protected Dictionary<PacketKey, List<List<Packet>>> incomingPackets;
 
         protected Common(EosTransport transport) {
             channels = transport.Channels;
@@ -243,7 +242,7 @@ namespace EpicTransport {
         public void ReceiveData() {
             try {
                 // Internal Channel, no fragmentation here
-                SocketId socketId = new SocketId();
+                SocketId socketId;
                 while (transport.enabled && Receive(out ProductUserId clientUserID, out socketId, out var internalMessage, (byte) internal_ch)) {
                     if (internalMessage.Count == 1) {
                         OnReceiveInternalData((InternalMessages) internalMessage.Array[0], clientUserID, socketId);
@@ -267,31 +266,34 @@ namespace EpicTransport {
                             incomingPackets.Add(incomingPacketKey, new List<List<Packet>>());
                         }
 
-                        int packetListIndex = incomingPackets[incomingPacketKey].Count;
-                        for (int i = 0; i < incomingPackets[incomingPacketKey].Count; i++) {
-                            if (incomingPackets[incomingPacketKey][i][0].id == packet.id) {
+                        var incomingPacketList = incomingPackets[incomingPacketKey];
+
+                        int packetListIndex = incomingPacketList.Count;
+                        for (int i = 0; i < incomingPacketList.Count; i++) {
+                            if (incomingPacketList[i][0].id == packet.id) {
                                 packetListIndex = i;
                                 break;
                             }
                         }
 
-                        if (packetListIndex == incomingPackets[incomingPacketKey].Count) {
-                            incomingPackets[incomingPacketKey].Add(new List<Packet>());
+                        if (packetListIndex == incomingPacketList.Count) {
+                            incomingPacketList.Add(new List<Packet>());
                         }
 
                         int insertionIndex = -1;
 
-                        for (int i = 0; i < incomingPackets[incomingPacketKey][packetListIndex].Count; i++) {
-                            if (incomingPackets[incomingPacketKey][packetListIndex][i].fragment > packet.fragment) {
+                        var incomingPacketListIndex = incomingPacketList[packetListIndex];
+                        for (int i = 0; i < incomingPacketListIndex.Count; i++) {
+                            if (incomingPacketListIndex[i].fragment > packet.fragment) {
                                 insertionIndex = i;
                                 break;
                             }
                         }
 
                         if (insertionIndex >= 0) {
-                            incomingPackets[incomingPacketKey][packetListIndex].Insert(insertionIndex, packet);
+                            incomingPacketListIndex.Insert(insertionIndex, packet);
                         } else {
-                            incomingPackets[incomingPacketKey][packetListIndex].Add(packet);
+                            incomingPacketListIndex.Add(packet);
                         }
                     }
                 }
@@ -299,12 +301,12 @@ namespace EpicTransport {
                 // Find fully received packets
                 List<List<Packet>> emptyPacketLists = new List<List<Packet>>();
                 foreach (KeyValuePair<PacketKey, List<List<Packet>>> keyValuePair in incomingPackets) {
-                    for (int packetList = 0; packetList < keyValuePair.Value.Count; packetList++) {
+                    foreach (var packetList in keyValuePair.Value) {
                         bool packetReady = true;
                         int packetLength = 0;
-                        for (int packet = 0; packet < keyValuePair.Value[packetList].Count; packet++) {
-                            Packet tempPacket = keyValuePair.Value[packetList][packet];
-                            if (tempPacket.fragment != packet || (packet == keyValuePair.Value[packetList].Count - 1 && tempPacket.moreFragments)) {
+                        for (int packet = 0; packet < packetList.Count; packet++) {
+                            Packet tempPacket = packetList[packet];
+                            if (tempPacket.fragment != packet || (packet == packetList.Count - 1 && tempPacket.moreFragments)) {
                                 packetReady = false;
                             } else {
                                 packetLength += tempPacket.data.Length;
@@ -315,20 +317,21 @@ namespace EpicTransport {
                             byte[] data = new byte[packetLength];
                             int dataIndex = 0;
 
-                            for (int packet = 0; packet < keyValuePair.Value[packetList].Count; packet++) {
-                                Array.Copy(keyValuePair.Value[packetList][packet].data, 0, data, dataIndex, keyValuePair.Value[packetList][packet].data.Length);
-                                dataIndex += keyValuePair.Value[packetList][packet].data.Length;
+                            for (int packet = 0; packet < packetList.Count; packet++) {
+                                Array.Copy(packetList[packet].data, 0, data, dataIndex, packetList[packet].data.Length);
+                                dataIndex += packetList[packet].data.Length;
                             }
 
                             OnReceiveData(data, keyValuePair.Key.productUserId, keyValuePair.Key.channel);
 
-                            if (transport.ServerActive() || transport.ClientActive())
-                                emptyPacketLists.Add(keyValuePair.Value[packetList]);
+                            if (transport.ServerActive() || transport.ClientActive()) {
+                                emptyPacketLists.Add(packetList);
+                            }
                         }
                     }
 
-                    for (int i = 0; i < emptyPacketLists.Count; i++) {
-                        keyValuePair.Value.Remove(emptyPacketLists[i]);
+                    foreach (var emptyList in emptyPacketLists) {
+                        keyValuePair.Value.Remove(emptyList);
                     }
                     emptyPacketLists.Clear();
                 }
